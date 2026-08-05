@@ -91,21 +91,8 @@ devices interoperate the same way. It has two parts:
 
 This project goal is to learn how a Zigbee network works and use it to find out what the custom BTZ end device boards is capable of.
 
-## 2. Coordinator implementation
+## 2. Coordinator implementation(./coordinator/README.md)
 
-Project structure:
-
-```
-zigbee_coordinator/
-├── CMakeLists.txt
-├── prj.conf                
-├── pm_static.yml
-├── boards/
-│   └── nrf52840dongle_nrf52840.overlay
-└── src/
-    ├── main.c               
-    └── zb_range_extender.h
-```
 The Coordinator creates and opens a Zigbee network, then waits for new
 devices to join. When a device joins, it identifies it and prints a
 message on the log. From there, commands can be sent to the joined

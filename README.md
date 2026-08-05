@@ -91,7 +91,7 @@ devices interoperate the same way. It has two parts:
 
 This project goal is to learn how a Zigbee network works and use it to find out what the custom BTZ end device boards is capable of.
 
-## 2. Coordinator implementation(./coordinator/README.md)
+## 2. [Coordinator implementation](./coordinator/README.md)
 
 The Coordinator creates and opens a Zigbee network, then waits for new
 devices to join. When a device joins, it identifies it and prints a

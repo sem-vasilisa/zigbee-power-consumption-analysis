@@ -1,0 +1,14 @@
+/ {
+    chosen {
+        ncs,zigbee-timer = &timer20;   /* 1 */
+    };
+};
+
+/* give all the memory to the cpuapp because we don't use flpr */
+&cpuapp_rram { reg = <0x0 DT_SIZE_K(1524)>; };                        /* 2 */
+&cpuapp_sram { reg = <0x20000000 DT_SIZE_K(256)>;
+               ranges = <0x0 0x20000000 0x40000>; };
+
+/* delete the hardware-flow-control property, which uses additional RTS and CTS, to use only RX TX GND */
+&uart20  { /delete-property/ hw-flow-control; };                       /* 3 */
+&timer20 { status = "okay"; };

@@ -1,0 +1,34 @@
+# Parametry aplikacji sterowane build-time (-DCONFIG_...=<wartosc>).
+#
+# Pola serii w board-power-test (zakladka Zigbee) odpowiadaja tym symbolom:
+#
+#   Send interval (T)    -> CONFIG_ZB_SEND_INTERVAL_S
+#   Long-poll interval   -> CONFIG_ZB_POLL_INTERVAL_S
+#
+# Keepalive zostaje na stale w kodzie (60 s, main.c), wiec nie ma go tutaj.
+#
+# Wartosci domyslne = dzisiejsze zachowanie kodu, wiec build bez zadnej
+# flagi daje ten sam obraz co dotad.
+
+config ZB_SEND_INTERVAL_S
+	int "Send interval T - co ile sekund wysylamy raport [s]"
+	default 20
+	range 1 4200
+	help
+	  Okres wysylania ZCL Report Attribute do koordynatora. To jest "T"
+	  z modelu I_avg(T) = E_report/T + I_sleep.
+
+	  Gorny limit 4200 s wynika z ZB_MILLISECONDS_TO_BEACON_INTERVAL:
+	  makro mnozy ms x 1000 w 32-bitowym zb_time_t, wiec ok. 4294 s to
+	  granica przepelnienia.
+
+config ZB_POLL_INTERVAL_S
+	int "Long-poll interval - co ile ED odpytuje rodzica [s]"
+	default 3600
+	range 1 4200
+	help
+	  macDataPollInterval: co tyle sekund radio budzi sie, zeby zapytac
+	  rodzica o zalegle wiadomosci. Kazde takie wybudzenie kosztuje prad,
+	  nawet gdy nie ma zadnych danych do odebrania.
+
+source "Kconfig.zephyr"

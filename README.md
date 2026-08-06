@@ -100,20 +100,6 @@ device through shell commands (e.g. `toggle`, `name`, `open`).
 
 ## 3. Router implementation
 
-Project structure:
-
-```
-zigbee_light_bulb/
-├── CMakeLists.txt
-├── prj.conf
-├── pm_static_nrf52840dongle_nrf52840.yml
-├── boards/
-│   └── nrf54l15dk_nrf54l15_cpuapp.overlay
-└── src/
-    ├── main.c
-    └── zb_light_bulb.h
-```
-
 The Router joins the Coordinator's existing network, then waits for
 commands. It doesn't discover anything about the Coordinator — it just
 listens and reacts. When the Coordinator sends an On/Off command, the

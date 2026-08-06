@@ -98,7 +98,7 @@ devices to join. When a device joins, it identifies it and prints a
 message on the log. From there, commands can be sent to the joined
 device through shell commands (e.g. `toggle`, `name`, `open`).
 
-## 3. Router implementation
+## 3. [Router implementation](./router_light_bulb/README.md)
 
 The Router joins the Coordinator's existing network, then waits for
 commands. It doesn't discover anything about the Coordinator — it just

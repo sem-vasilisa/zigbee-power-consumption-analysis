@@ -198,7 +198,7 @@ identifying that device.
  
 - **`DEVICE_ANNCE`** — when a new device joins, it's expected to broadcast
   an announcement ("I'm here, this is my address").
-- **`ZB_ZDO_SIGNAL_DEVICE_AUTHORIZED`** — received once a new device has
+- **`DEVICE_AUTHORIZED`** — received once a new device has
   completed the security handshake: the Trust Center has exchanged keys
   with it, and the device is now secured on the network.
 **Why "secure" matters:** before this point, a device has joined the
@@ -209,10 +209,6 @@ messages. Without it, messages would be unreadable gibberish. "Secure"
 means: the device has the network key, is trusted by the Trust Center, and
 can fully participate on the network.
  
-- **`zb_bdb_set_legacy_device_support(1)`** — allows older/simpler Zigbee
-  devices that don't fully implement the newest security handshake to
-  still join. Without this, some real-world devices would be rejected
-  outright.
 **Addressing details:**
  
 - `short_addr` — a 16-bit network address: short, fast to use in packets,
@@ -221,10 +217,6 @@ can fully participate on the network.
   identifier burned in at manufacture time, stored as `zb_ieee_addr_t` —
   an array of 8 bytes in **little-endian** order (least significant byte
   first, at index 0; most significant byte last, at index 7).
-`ZB_ZDO_SIGNAL_GET_PARAMS(sg_p, zb_zdo_signal_device_authorized_params_t)`
-is a helper that casts a signal's raw parameter data into a pointer of a
-specific struct type — "give me this signal's data as this struct, so I
-can read its fields."
  
 **How the Coordinator "sees" a new device joining:**
  
@@ -234,7 +226,7 @@ can read its fields."
 2. Once it hears the Coordinator's beacon (while Steering is active),
    joining happens through three concrete exchanges:
    1. **Association request/response** — the End Device asks to join; the
-      Coordinator replies with a short address (the device's ID within
+      Coordinator replies with a address (the device's ID within
       this network from now on). This is when `DEVICE_ANNCE` occurs.
    2. **Network key delivery** — the Coordinator sends the network key
       (needed for encrypting/decrypting messages), wrapped in a temporary
@@ -262,34 +254,23 @@ three sequential queries:
    Coordinator's endpoint to the target's endpoint+cluster, so future
    commands know exactly where to go: "bind: my endpoint 10 ↔ your
    endpoint 20, for the On/Off cluster."
-"ZDO" is short for **Zigbee Device Object** — a special logical endpoint
+"ZDO" is  for **Zigbee Device Object** — a special logical endpoint
 (endpoint 0) every Zigbee device has, dedicated to network-management
-tasks rather than application data.
+tasks.
  
 `handle_device_joined()` starts this discovery chain as soon as a new
 device's endpoint is detected.
- 
-The whole process is **asynchronous**, since it's request/response
-communication over radio that takes real time. The pattern is: ZBOSS
-calls a callback with the response → inside that callback, the next
-request is sent. This chains together as:
-`send_active_ep_req` → (response) → `active_ep_cb` →
-`send_simple_desc_req` → (response) → `simple_desc_cb` → `do_bind` →
-(response) → `bind_cb`.
  
 A pressed button triggers an interrupt (ISR). The ISR itself only tells
 the ZBOSS thread that something happened; the actual work is handled via
 `zb_buf_get_out_delayed`, which requests a buffer and schedules the real
 work to run later, on the ZBOSS thread itself.
- 
-**Handling "unimplemented signal" warnings:** search the ZBOSS header
+
+In case of **unimplemented signal** warning, search the ZBOSS header
 files for where that signal number is defined as a constant, to find its
-actual name (e.g. `ZB_NLME_STATUS_INDICATION` for signal 52) and
-understand what kind of notification it represents. Then add an explicit
-`case` for that signal in `zboss_signal_handler`'s switch statement, so
-it's handled by application code instead of falling through to the
-default handler's "Unimplemented signal" message.
- 
+actual name, then add additional `case` for that signal in `zboss_signal_handler` so
+it's handled by application code instead of default handler's "Unimplemented signal" message
+
 ---
  
 ### Step 6 — Controlling via shell command
@@ -304,7 +285,7 @@ reading input, and parsing it.
 **How typing in a terminal reaches the chip:** the COM port is a two-way
 pipe (chip → computer and computer → chip). Setting
 `CONFIG_SHELL_BACKEND_SERIAL=y` makes the shell listen on that same
-UART/USB serial port for incoming characters.
+UART/USB serial port for incoming characters. Here we defined `toggle` and `open` commands.
  
 ---
  
@@ -327,10 +308,5 @@ there, the task is handed off to a separate worker thread.
    "you can continue now."
 The worker then wakes up, takes the saved name, stores it, and starts
 ZDO discovery.
- 
-**How the semaphore works:** it holds a count, starting at 0.
-`k_sem_give()` increments it to 1; `k_sem_take()` blocks until the count
-is ≥ 1, then consumes it back down to 0 and continues execution. The
-worker thread blocks on `k_sem_take` until the shell thread calls
-`k_sem_give`.
- 
+
+ ---

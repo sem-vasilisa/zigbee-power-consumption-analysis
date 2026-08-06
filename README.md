@@ -107,7 +107,7 @@ Router updates its state and turns the LED on or off to match. Unlike
 an End Device, the Router keeps its radio on all the time, so it reacts
 immediately with no polling or delay.
 
-## 4. End device implementation
+## 4. [End device implementation](./end_device_nrf54l15/README.md)
 
 Project structure:
 

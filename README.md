@@ -109,20 +109,6 @@ immediately with no polling or delay.
 
 ## 4. [End device implementation](./end_device_nrf54l15/README.md)
 
-Project structure:
-
-```
-zigbee_light_bulb/
-├── CMakeLists.txt
-├── prj.conf
-├── Kconfig
-├── app.overlay
-├── sysbuild.conf
-└── src/
-    ├── main.c
-    └── zb_sensor_node.h
-```
-
 The End Device is a sleepy Zigbee node built for power measurement. It
 wakes on a timer, sends one fixed test value to the Coordinator, and
 goes back to sleep — repeating forever with no human interaction needed.

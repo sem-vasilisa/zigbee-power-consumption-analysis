@@ -73,21 +73,62 @@ passing through the Coordinator. **Reverse binding** is the Coordinator
 binding *itself* to a device, so it can receive that device's reports or
 commands.
 
-### 1.5 Network setup: BDB
+### 1.5 Environment Setup
 
-**BDB (Base Device Behavior)** is the standardized set of procedures every
-Zigbee device follows to join and set up a network, so all vendors'
-devices interoperate the same way. It has two parts:
+Before building this project, install the following tools:
 
-- **Network formation** — scan all 16 channels, pick the quietest one,
-  pick an unused PAN ID, and save both to non-volatile memory (NVRAM).
-  At this point the network exists, but is closed to new devices.
-- **Network steering** —
-  - *Coordinator*: broadcast beacons and open the network for joining
-    (permit-join) for a limited window, 180 seconds by default.
-  - *End Device / Router*: scan for an open network and attempt to join it.
+1. **VS Code** — https://code.visualstudio.com
 
-### 1.6 Project goal
+2. **nRF Connect for Desktop** — https://www.nordicsemi.com/Products/Development-tools/nRF-Connect-for-Desktop
+   From it, install the **Serial Terminal** app (needed for logs and shell access).
+
+3. **nRF Util** — download `nrfutil.exe` from Nordic
+   (https://www.nordicsemi.com/Products/Development-tools/nRF-Util), place it
+   in a directory on your `PATH`, then run in Git Bash:
+```bash
+   nrfutil install device          # USB device detection
+   nrfutil install nrf5sdk-tools   # DFU commands for the dongle
+```
+
+4. **VS Code extension**: install the **"nRF Connect for VS Code Extension
+   Pack"** (this also installs CMake, devicetree tooling, etc.).
+
+5. **NCS toolchain**: in VS Code, open the nRF Connect panel (sidebar icon) →
+   **Manage toolchains** → **Install Toolchain** → select **v2.9.2**.
+   The toolchain (ARM GCC compiler, CMake, west, Python) installs to
+   `c:\ncs\toolchains\`.
+
+> **Toolchain vs. SDK — what's the difference?**
+> The toolchain is just the build tools. The SDK (Zephyr, Nordic, and ZBOSS
+> sources) is fetched separately via `west` in the next step — this keeps
+> full control over which SDK version is used.
+
+---
+
+### 1.6 Creating a West Workspace with the Zigbee Add-on
+
+Since Zigbee is delivered as an add-on module (`ncs-zigbee`), the workspace
+is initialized **from that add-on's manifest** — it pulls in the matching
+NCS version automatically (its `west.yml` points to `nrf` revision **v2.9.2**).
+
+In VS Code: open the nRF Connect panel → click the terminal icon → **nRF
+Connect Terminal** (a terminal with `west` and the toolchain already on
+`PATH` — select the **Git Bash** profile). Then run:
+
+```bash
+mkdir -p /c/dev/zigbee        # in Git Bash, C: maps to /c
+cd /c/dev/zigbee
+
+# Initialize the workspace from the Zigbee add-on manifest.
+# --mr = manifest revision; pick the add-on tag matching NCS v2.9.2
+# (check tags at https://github.com/nrfconnect/ncs-zigbee/tags)
+west init -m https://github.com/nrfconnect/ncs-zigbee --mr <tag>
+west update
+```
+
+---
+
+### 1.7 Project goal
 
 This project goal is to learn how a Zigbee network works and use it to find out what the custom BTZ end device boards is capable of.
 

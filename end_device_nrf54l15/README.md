@@ -69,7 +69,7 @@ ready-made driver for it. The temperature sensor required more work,
 since no driver exists for this exact chip.
 
 Sensor driver implementation, wiring details, and setup notes live in
-the [sensors repository]([link-to-sensors-repo](https://github.com/sem-vasilisa/zigbee_ed_with_sensors/tree/main)).
+the [sensors repository](https://github.com/sem-vasilisa/zigbee_ed_with_sensors/tree/main).
 
 ---
 

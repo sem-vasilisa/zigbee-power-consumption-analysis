@@ -309,4 +309,6 @@ there, the task is handed off to a separate worker thread.
 The worker then wakes up, takes the saved name, stores it, and starts
 ZDO discovery.
 
+Additionally `devices` command was added to list all connected devices.
+
  ---

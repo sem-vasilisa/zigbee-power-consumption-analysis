@@ -79,4 +79,4 @@ For power measurement testing, the sensor logic was disabled. A minimal
 test method was implemented instead: the End Device sends a fixed,
 constant value to the Coordinator every T seconds — no requests, no
 acknowledgements, no sensor reads. Tests were conducted using the Power
-Profiler Kit II (PPK2) and the board-power-test application.
+Profiler Kit II (PPK2) and the [board-power-test application](https://github.com/qbx11/board-power-test).

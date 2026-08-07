@@ -33,6 +33,44 @@ zigbee_light_bulb/
 
 ---
 
+## Build & Flash
+
+### Setup environment
+Source the nRF Connect SDK toolchain environment:
+
+```bash
+source ~/ncs/toolchains/b77d8c1312/ncsenv.sh
+```
+
+### Build and flash
+Navigate to the project directory and build with sysbuild for the
+custom board target:
+
+```bash
+cd ~/projects/workspace_zigbee/zigbee-internal-btz
+west build -b BTZ_EndDevice/nrf54l15/cpuapp --sysbuild -- -DBOARD_ROOT=~/projects/workspace_zigbee
+west flash
+```
+
+### Full clean build
+If you're seeing unexpected/stale behavior after code changes, or
+switching board configs, do a full clean: erase the chip's flash first,
+then rebuild from scratch with `--pristine`.
+
+```bash
+# Erase the chip's flash
+nrfutil device erase --serial-number 000802012649
+
+# Clean rebuild
+west build -b BTZ_EndDevice/nrf54l15/cpuapp --sysbuild --pristine -- -DBOARD_ROOT=~/projects/workspace_zigbee
+west flash
+```
+
+> **Note:** replace `000802012649` with your board's actual serial number
+> (find it via `nrfutil device list` if unsure).
+
+---
+
 ## Implementation
 
 The implementation is essentially the same as the Router's — the

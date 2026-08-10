@@ -7,6 +7,7 @@
 #include <zigbee/zigbee_app_utils.h> // Nordic's helper functions (zigbee_enable, sleepy behavior, etc.)
 #include <zigbee/zigbee_error_handler.h> // ZB_ERROR_CHECK macro
 #include <zb_nrf_platform.h> // zigbee_enable()
+#include <ram_pwrdn.h>
 
 LOG_MODULE_REGISTER(btz, LOG_LEVEL_INF);
 
@@ -166,6 +167,10 @@ int main(void){
     // keepalive timeout should be ≥ poll interval.
     zb_set_keepalive_timeout(ZB_MILLISECONDS_TO_BEACON_INTERVAL(3600000)); /* 60 min - how often the end device tells its parent "I'm still here" */
     zigbee_configure_sleepy_behavior(true); /* enable sleepy behavoir */
+
+    if (IS_ENABLED(CONFIG_RAM_POWER_DOWN_LIBRARY)) {
+        power_down_unused_ram();
+    }
 
     zb_zdo_pim_set_long_poll_interval(CONFIG_ZB_POLL_INTERVAL_S * 1000); /* how often an end device wakes up to poll a parent about a new message (default 30 s) */
     zigbee_enable(); /* enable zigbee */
